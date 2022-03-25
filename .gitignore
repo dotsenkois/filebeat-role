@@ -1,1 +1,2 @@
 molecule/default/files/filebeat-8.1.0-amd64.deb
+molecule/default/files/filebeat-8.1.0-x86_64.rpm
