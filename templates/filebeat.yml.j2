@@ -1,8 +1,30 @@
 ---
 output.elasticsearch:
-  hosts: ["http://10.130.0.10:9200"]
+  hosts: ["http://{{ ansible_facts['default_ipv4']['address'] | default('127.0.0.1') }}:9200"]
   username: "dotsenkois"
-  password: "YOUR_PASSWORD" 
+  password: "megapass" 
   ssl:
     enabled: true
     ca_trusted_fingerprint: "b9a10bbe64ee9826abeda6546fc988c8bf798b41957c33d05db736716513dc9c"
+output.logstash:
+    hosts: ["{{ ansible_facts['default_ipv4']['address'] | default('127.0.0.1') }}:5044"]
+processors:
+  - add_host_metadata:
+      when.not.contains.tags: forwarded
+  - add_cloud_metadata: ~
+  - add_docker_metadata: ~
+  - add_kubernetes_metadata: ~
+setup.kibana:
+  host: "{{ ansible_facts['default_ipv4']['address'] | default('127.0.0.1') }}:5601"
+setup.template.settings:
+  index.number_of_shards: 1
+filebeat.config.modules:
+  # Glob pattern for configuration loading
+  path: ${path.config}/modules.d/*.yml
+
+filebeat.inputs:
+- type: filestream
+  enabled: false
+  paths:
+    - /var/log/*.log
+
