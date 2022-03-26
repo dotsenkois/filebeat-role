@@ -1,4 +1,9 @@
 ---
+- name: "Check that filebeat's deb is exists"
+  stat:
+    path: "files/filebeat-{{ filebeat_version }}-x86_64.rpm"
+  register: stat_result
+  delegate_to: localhost
 - name: "Download filebeat's rpm"
   get_url:
     url: "https://artifacts.elastic.co/downloads/beats/filebeat/filebeat-{{ filebeat_version }}-x86_64.rpm"
@@ -7,7 +12,9 @@
   register: download_filebeat
   delegate_to: localhost
   until: download_filebeat is succeeded
-  when: filebeat_install_type == 'remote'
+  when: 
+  - not stat_result.stat.exists
+  - filebeat_install_type == 'remote'
 - name: Copy filebeat to managed node
   copy:
     src: "files/filebeat-{{ filebeat_version }}-x86_64.rpm"
