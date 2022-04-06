@@ -1,3 +1,4 @@
 ---
 filebeat_version: "8.1.0"
 filebeat_install_type: remote
+pkg_tmp_src: /tmp/_elk-stack

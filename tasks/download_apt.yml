@@ -1,13 +1,13 @@
 ---
 - name: "Check that filebeat's deb is exists"
   stat:
-    path: "files/filebeat-{{ filebeat_version }}-amd64.deb"
+    path: "{{ pkg_tmp_src }}/filebeat-{{ filebeat_version }}-amd64.deb"
   register: stat_result
   delegate_to: localhost
 - name: "Download filebeat's deb"
   get_url:
     url: "https://artifacts.elastic.co/downloads/beats/filebeat/filebeat-{{ filebeat_version }}-amd64.deb"
-    dest: "files/filebeat-{{ filebeat_version }}-amd64.deb"
+    dest: "{{ pkg_tmp_src }}/filebeat-{{ filebeat_version }}-amd64.deb"
     validate_certs: false
   delegate_to: localhost
   register: download_filebeat
@@ -17,6 +17,6 @@
   - filebeat_install_type == 'remote'
 - name: Copy filebeat to manage host
   copy:
-    src: "files/filebeat-{{ filebeat_version }}-amd64.deb"
+    src: "{{ pkg_tmp_src }}/filebeat-{{ filebeat_version }}-amd64.deb"
     mode: 0755
     dest: "/tmp/filebeat-{{ filebeat_version }}-amd64.deb"
